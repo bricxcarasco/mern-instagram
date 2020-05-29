@@ -18,6 +18,21 @@ router.get('/allpost', (req, res) => {
         });
 });
 
+router.get('/mypost', requireLogin, (req, res) => {
+    Post.find({
+        postedBy: req.user.id
+    })
+    .populate("postedBy", "_id name")
+    .then(myposts => {
+        res.json({
+            myposts
+        });
+    })
+    .catch(error => {
+        console.log(error);
+    });
+});
+
 router.post('/createpost', requireLogin, (req, res) => {
     const { title, body } = req.body;
     if (!title || !body) {
