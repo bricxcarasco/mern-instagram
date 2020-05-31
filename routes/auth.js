@@ -23,7 +23,7 @@ router.post('/signup', (req, res) => {
         .then((savedUser) => {
             if (savedUser) {
                 return res.status(422).json({
-                    error: "User already existed with that email!"
+                    error: "User already existed with that email"
                 });
             }
 
@@ -38,7 +38,7 @@ router.post('/signup', (req, res) => {
                     user.save()
                         .then(user => {
                             res.json({
-                                message: "Save successfully!"
+                                message: "Successfully signed up"
                             });
                         })
                         .catch(error => {
@@ -55,7 +55,7 @@ router.post('/signin', (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(422).json({
-            error: "Please input email or password!"
+            error: "Please input email or password"
         });
     }
     User.findOne({ email })
@@ -75,8 +75,15 @@ router.post('/signin', (req, res) => {
                             _id: savedUser._id
                         }, JWT_SECRET);
 
+                        const { _id, name, email } = savedUser;
+
                         res.json({
-                            token
+                            token,
+                            user: {
+                                _id,
+                                name,
+                                email
+                            }
                         });
                     } else {
                         return res.status(422).json({

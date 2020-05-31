@@ -37,7 +37,7 @@ router.post('/createpost', requireLogin, (req, res) => {
     const { title, body } = req.body;
     if (!title || !body) {
         return res.status(422).json({
-            error: "Please input the fields!"
+            error: "Please input the fields"
         });
     }
     req.user.password = undefined;
