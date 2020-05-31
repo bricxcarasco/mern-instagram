@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const { MONGOURI } = require('./keys');
 
@@ -22,6 +23,7 @@ mongoose.connection.on('error', (err) => {
 require('./models/user');
 require('./models/post');
 
+app.use(cors());
 app.use(express.json());
 app.use(require('./routes/auth'));
 app.use(require('./routes/post'));
