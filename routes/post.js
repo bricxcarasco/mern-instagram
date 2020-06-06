@@ -92,4 +92,27 @@ router.put('/unlike', requireLogin, (req, res) => {
     });
 });
 
+router.put('/comment', requireLogin, (req, res) => {
+    const { comment, postId } = req.body;
+    const comments = {
+        text: comment,
+        postedBy: req.user._id;
+    }
+    Post.findByIdAndUpdate(postId, {
+        $push: {
+            comments
+        }
+    }, {
+        new: true
+    })
+    .populate("comments.postedBy", "_id name")
+    .exec((error, result) => {
+        if (error) {
+            res.status(422).json(error);
+        } else {
+            res.json(result);
+        }
+    });
+});
+
 module.exports = router;
