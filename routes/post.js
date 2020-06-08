@@ -139,4 +139,27 @@ router.put('/comment', requireLogin, (req, res) => {
     });
 });
 
+router.delete('/delete-comment/:postId/:commentId', requireLogin, (req, res) => {
+    const { postId, commentId } = req.params;
+    const comment = {
+        _id: commentId
+    };
+    Post.findByIdAndUpdate(postId, {
+        $pull: {
+            comments: comment
+        }
+    }, {
+        new: true
+    })
+    .populate("postedBy", "_id name")
+    .populate("comments.postedBy", "_id name")
+    .exec((error, result) => {
+        if (error) {
+            res.status(422).json(error);
+        } else {
+            res.json(result);
+        }
+    });
+});
+
 module.exports = router;
