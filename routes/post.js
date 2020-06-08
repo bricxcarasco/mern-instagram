@@ -5,7 +5,7 @@ const requireLogin = require('../middleware/requireLogin');
 
 const Post = mongoose.model('Post');
 
-router.get('/allpost', requireLogin, (req, res) => {
+router.get('/posts', requireLogin, (req, res) => {
     Post.find()
         .populate("postedBy", "_id name")
         .populate("comments.postedBy", "_id name")
@@ -19,7 +19,7 @@ router.get('/allpost', requireLogin, (req, res) => {
         });
 });
 
-router.get('/mypost', requireLogin, (req, res) => {
+router.get('/my-post', requireLogin, (req, res) => {
     Post.find({
         postedBy: req.user.id
     })
@@ -34,7 +34,7 @@ router.get('/mypost', requireLogin, (req, res) => {
     });
 });
 
-router.post('/createpost', requireLogin, (req, res) => {
+router.post('/create-post', requireLogin, (req, res) => {
     const { title, body, photo } = req.body;
     if (!title || !body || !photo) {
         return res.status(422).json({
@@ -57,6 +57,28 @@ router.post('/createpost', requireLogin, (req, res) => {
         .catch(error => {
             console.log(error);
         });
+});
+
+router.delete('/delete-post/:postId', requireLogin, (req, res) => {
+    Post.findOne({
+        _id: req.params.postId
+    })
+    .populate("postedBy", "_id")
+    .exec((error, post) => {
+        if (error || !post) {
+            return res.status(422).json(error);
+        }
+
+        if (post.postedBy._id.toString() === req.user._id.toString()) {
+            post.remove()
+            .then(result => {
+                res.json(result);
+            })
+            .catch(error => {
+                console.log(error);
+            })
+        }
+    })
 });
 
 router.put('/like', requireLogin, (req, res) => {
