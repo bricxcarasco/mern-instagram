@@ -8,6 +8,7 @@ const app = express();
 const PORT = 5000;
 
 mongoose.connect(MONGOURI, {
+    useFindAndModify: false,
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -25,6 +26,7 @@ require('./models/post');
 
 app.use(cors());
 app.use(express.json());
+app.use(require('./routes/user'));
 app.use(require('./routes/auth'));
 app.use(require('./routes/post'));
 
