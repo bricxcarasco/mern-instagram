@@ -32,7 +32,9 @@ router.post('/signup', (req, res) => {
                     const user = new User({
                         email,
                         password:hashedPassword,
-                        name
+                        name,
+                        followers: [],
+                        following: []
                     });
         
                     user.save()
@@ -68,21 +70,20 @@ router.post('/signin', (req, res) => {
             bcrypt.compare(password, savedUser.password)
                 .then(doPasswordMatched => {
                     if (doPasswordMatched) {
-                        // res.json({
-                        //     message: "Successfully signed in"
-                        // });
                         const token = jwt.sign({
                             _id: savedUser._id
                         }, JWT_SECRET);
 
-                        const { _id, name, email } = savedUser;
+                        const { _id, name, email, followers, following } = savedUser;
 
                         res.json({
                             token,
                             user: {
                                 _id,
                                 name,
-                                email
+                                email,
+                                followers,
+                                following
                             }
                         });
                     } else {
