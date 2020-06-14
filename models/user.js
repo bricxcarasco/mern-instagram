@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    photo: {
+        type: String,
+        default: "https://res.cloudinary.com/gss-bricx-carasco/image/upload/v1592118916/default-profile-pic_kwnbgu.png"
+    },
     followers: [{
         type: ObjectId,
         ref: 'User'

@@ -11,7 +11,7 @@ const requireLogin = require('../middleware/requireLogin');
 const User = mongoose.model('User');
 
 router.post('/signup', (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, imageUrl } = req.body;
 
     if (!name || !email || !password) {
         return res.status(422).json({
@@ -31,8 +31,9 @@ router.post('/signup', (req, res) => {
                 .then(hashedPassword => {
                     const user = new User({
                         email,
-                        password:hashedPassword,
+                        password: hashedPassword,
                         name,
+                        photo: imageUrl,
                         followers: [],
                         following: []
                     });
@@ -74,7 +75,7 @@ router.post('/signin', (req, res) => {
                             _id: savedUser._id
                         }, JWT_SECRET);
 
-                        const { _id, name, email, followers, following } = savedUser;
+                        const { _id, name, email, photo, followers, following } = savedUser;
 
                         res.json({
                             token,
@@ -82,6 +83,7 @@ router.post('/signin', (req, res) => {
                                 _id,
                                 name,
                                 email,
+                                photo,
                                 followers,
                                 following
                             }
