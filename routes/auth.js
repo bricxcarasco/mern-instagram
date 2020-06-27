@@ -3,12 +3,22 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
 
-const { JWT_SECRET } = require('../keys');
+const { JWT_SECRET, SENDGRID_APIKEY } = require('../keys');
 
 const requireLogin = require('../middleware/requireLogin');
 
 const User = mongoose.model('User');
+
+// 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
+
+const transporter = nodemailer.createTransport(sendgridTransport({
+    auth: {
+        api_key: SENDGRID_APIKEY
+    }
+}));
 
 router.post('/signup', (req, res) => {
     const { name, email, password, imageUrl } = req.body;
@@ -40,6 +50,13 @@ router.post('/signup', (req, res) => {
         
                     user.save()
                         .then(user => {
+                            transporter.sendMail({
+                                to: user.email,
+                                from: "no-reply@bricxtagram.com",
+                                subject: "Signup Successfully",
+                                html: "<h1>Welcome to Bricx-tagram</h1>"
+                            });
+                            
                             res.json({
                                 message: "Successfully signed up"
                             });
