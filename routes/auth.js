@@ -51,12 +51,12 @@ router.post('/signup', (req, res) => {
         
                     user.save()
                         .then(user => {
-                            transporter.sendMail({
-                                to: user.email,
-                                from: "no-reply@bricxtagram.com",
-                                subject: "Signup Successfully",
-                                html: "<h1>Welcome to Bricx-tagram</h1>"
-                            });
+                            // transporter.sendMail({
+                            //     to: user.email,
+                            //     from: "no-reply@bricxtagram.com",
+                            //     subject: "Signup Successfully",
+                            //     html: "<h1>Welcome to Bricx-tagram</h1>"
+                            // });
                             
                             res.json({
                                 message: "Successfully signed up"
@@ -149,6 +149,51 @@ router.post('/reset-password', (req, res) => {
                         });
                     })
             });
+    });
+});
+
+router.post('/new-password', (req, res) => {
+    const { token, password } = req.body;
+    User.findOne({ 
+        resetToken: token, 
+        expireTokenDate: {
+            $gt: Date.now()
+        }
+    })
+    .then(user => {
+        if (!user) {
+            return res.status(422).json({
+                error: "Try again, token is expired"
+            });
+        }
+        bcrypt.hash(password, 12)
+            .then(hashedPassword => {
+                user.password = hashedPassword;
+                user.resetToken = undefined;
+                user.expireTokenDate = undefined;
+                user.save()
+                    .then(result => {
+                        // transporter.sendMail({
+                        //     to: result.email,
+                        //     from: "no-reply@bricxtagram.com",
+                        //     subject: "Password Successfully Changed",
+                        //     html: `
+                        //         <h2>Bricxtagram</h2>
+                        //         <p>Your password successfully changed<p>
+                        //     `
+                        // });
+
+                        res.json({
+                            message: "Password succesfully changed"
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            })
+    })
+    .catch(error => {
+        console.log(error);
     });
 });
 
