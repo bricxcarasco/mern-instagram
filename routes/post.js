@@ -9,6 +9,7 @@ router.get('/posts', requireLogin, (req, res) => {
     Post.find()
         .populate("postedBy", "_id name")
         .populate("comments.postedBy", "_id name")
+        .sort('-createdAt')
         .then(posts => {
             res.json({
                 posts
@@ -27,6 +28,7 @@ router.get('/posts/following', requireLogin, (req, res) => {
     })
     .populate("postedBy", "_id name")
     .populate("comments.postedBy", "_id name")
+    .sort('-createdAt')
     .then(posts => {
         res.json({
             posts
@@ -42,6 +44,7 @@ router.get('/my-post', requireLogin, (req, res) => {
         postedBy: req.user.id
     })
     .populate("postedBy", "_id name")
+    .sort('-createdAt')
     .then(myposts => {
         res.json({
             myposts

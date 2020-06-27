@@ -13,8 +13,6 @@ const requireLogin = require('../middleware/requireLogin');
 
 const User = mongoose.model('User');
 
-// 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
-
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
         api_key: SENDGRID_APIKEY
